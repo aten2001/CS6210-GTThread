@@ -1,82 +1,37 @@
 #ifndef __GTTHREAD_INTERNALS_H
 #define __GTTHREAD_INTERNALS_H
 
-#include "gtthread_sched.h"		/* For scheduling policy */
+#include <ucontext.h>
+#include <stdlib.h>
+#include <stdio.h>
 
-
-typedef long gtthread_lock_t;
-
-/*
- * Threads
- */
-
-typedef struct _gtthread
+typedef unsigned long gtthread_t;
+	
+typedef struct _gtthread_descr_struct
 {
-	long sig;			/* Unique signature for this structure */
-	gtthread_lock_t lock;		/* Used for internal mutex on structure */
-	struct sched_param param;
-	struct _gtthread_mutex *mutexes;
-	void *exit_value;
-	void *(*fun)(void*);		/* Thread start routine */
-	void *arg;			/* Argment for thread start routine */
-} *gtthread_t;
+	struct _gtthread_descr_struct* p_nextlive;		/* Chaining of active threads. */
+	struct _gtthread_descr_struct* p_nextwaiting;		/* Next element in the queue holding the thr */
+	int p_main;						/* true if main process */
+        int p_sigwaiting;					/* true if a sigwait() is in progress */
+	int p_terminated;					/* true if terminated e.g. by pthread_exit */
+	void* p_retval;						/* placeholder for return value */
+	void** p_joining;					/* thread joining on that thread or NULL (Not sure)*/
+	gtthread_t p_tid;					/* Thread identifier */
+	ucontext_t* p_context;					/* Context switching */
+} p_Node;
 
+typedef p_Node* p_Node_ptr;
 
-/*
- * Thread attributes
- */
-
-typedef struct
+typedef struct gtthread_mutex_node
 {
-	long sig;			/* Unique signature for this structure */
-	gtthread_lock_t lock;		/* Used for internal mutex on structure */
-	struct sched_param param;
-} ptthread_attr_t;
+	long lock;
+	gtthread_t owner;
+}gtthread_mutex_t;
 
 
-/*
- * Mutex attributes
- */
+p_Node* dequeue(p_Node_ptr*);
+void add_toQueue(p_Node_ptr*, p_Node*);
+p_Node* dequeue_ThreadId(p_Node_ptr*, gtthread_t);
+void time_scheduler(int);
 
-typedef struct
-{
-	long sig;			/* Unique signature for this structure */
-} gtthread_mutexattr_t;
-
-
-/*
- * Mutex variables
- */
-
-typedef struct _gtthread_mutex
-{
-	long sig;			/* Unique signature for this structure */
-	gtthread_lock_t lock;		/* Used for internal mutex on structure */
-	gtthread_t owner;		/* Which thread has this mutex locked */
-	struct _gtthread_mutex *next, *prev;		/* List of other mutexes he owns */
-	struct _pthread_cond *busy;	/* List of condition variables using this mutex */
-} gtthread_mutex_t;
-
-
-/*
- * Condition cariable attributes
- */
-
-
-typedef struct
-{
-	long sig;			/* Unique signature for this structure */
-} gtthread_cond_t;
-
-
-/*
- * Condition variables
- */
-
-typedef struct _gtthread_cond
-{
-	long sig;			/* Unique signature for this structure */
-	gtthread_lock_t lock;		/* Used for internal mutex on structure */
-	struct _gtthread_mutex *next, *prev;		/* List of condition variables using mutex */
-	struct _gtthread_mutex *busy;		/* mutex associated with variable */
-} gtthread_cond_t;
+#endif

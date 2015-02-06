@@ -1,6 +1,13 @@
 #ifndef __GTTHREAD_H
 #define __GTTHREAD_H
 
+#include "gtthread_internals.h"
+
+
+typedef int bool;
+enum { false, true };
+
+
 /* Must be called before any of the below functions. Failure to do so may
  * result in undefined behavior. 'period' is the scheduling quantum (interval)
  * in microseconds (i.e., 1/1000000 sec.). */
@@ -44,5 +51,4 @@ int  gtthread_mutex_unlock(gtthread_mutex_t *mutex);
 
 /* gtthread_mutex_destroy() and gtthread_mutex_trylock() do not need to be
  * implemented */
-
-#endif // __GTTHREAD_H
+#endif /* __GTTHREAD_H  */

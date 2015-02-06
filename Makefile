@@ -1,6 +1,6 @@
 #### GTThread Library Makefile
 
-CFLAGS  = -Wall -pedantic
+CFLAGS  = -Wall -pedantic -g -rdynamic
 LFLAGS  =
 CC      = gcc
 RM      = /bin/rm -rf
@@ -18,6 +18,8 @@ LIB_OBJ = $(patsubst %.c,%.o,$(LIB_SRC))
 	$(CC) -c $(CFLAGS) $< -o $@
 
 all: $(LIBRARY)
+
+	gcc -Wall -pedantic -o dining src/test-12.c gtthread.a
 
 $(LIBRARY): $(LIB_OBJ)
 	$(AR) $(LIBRARY) $(LIB_OBJ)
