@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "gtthread.h"
+#include "../gtthread.h"
 
 gtthread_t t1;
 gtthread_mutex_t g_mutex;
@@ -27,8 +27,9 @@ int main() {
     gtthread_mutex_lock(&g_mutex);
 
     gtthread_create( &t1, thr1, NULL);
-    gtthread_yield();
+
     printf("main hello\n");
+    gtthread_yield();
     gtthread_mutex_unlock(&g_mutex);
     gtthread_join(t1, NULL);
     return EXIT_SUCCESS;

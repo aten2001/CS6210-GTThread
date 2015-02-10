@@ -2,7 +2,7 @@
 // gtthread_equal.
 
 #include <stdio.h>
-#include <gtthread.h>
+#include "../gtthread.h"
 
 void* worker(void* arg)
 {

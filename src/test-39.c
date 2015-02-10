@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "gtthread.h"
+#include "../gtthread.h"
 
 gtthread_t t1;
 gtthread_t t2;
